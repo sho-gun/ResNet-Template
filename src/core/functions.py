@@ -42,7 +42,6 @@ def test(model=None, dataloader=None, device='cpu'):
     with torch.no_grad():
         for inputs, labels in dataloader:
             outputs = model(inputs.to(device))
-            print(outputs.data.to('cpu'))
             _, predicted = torch.max(outputs.data, 1)
             total += labels.size(0)
             correct += (predicted.to('cpu') == labels).sum().item()

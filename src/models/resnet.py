@@ -20,7 +20,9 @@ class ResNet(nn.Module):
             exit(1)
 
         self.resnet.fc = nn.Linear(self.resnet.fc.in_features, 10)
+        self.softmax = nn.Softmax(dim=1)
 
     def forward(self, x):
         x = self.resnet(x)
+        x = self.softmax(x)
         return x

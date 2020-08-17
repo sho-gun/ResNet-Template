@@ -5,6 +5,7 @@ import torch.nn as nn
 import torch.optim as optim
 import torchvision
 import torchvision.transforms as transforms
+from torchsummary import summary
 
 import matplotlib
 matplotlib.use('Agg')
@@ -56,6 +57,8 @@ def main(args):
     model = ResNet(num_layers=18, pretrained=True).to(DEVICE)
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.SGD(model.parameters(), lr=args.lr, momentum=0.9)
+
+    summary(model, input_size=(3, 32, 32))
 
     max_epoch = args.max_epoch
     last_epoch = 0
