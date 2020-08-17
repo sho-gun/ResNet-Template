@@ -5,7 +5,11 @@ import torch.nn as nn
 import torch.optim as optim
 import torchvision
 import torchvision.transforms as transforms
-import numpy as np
+
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+
 from models.resnet import ResNet
 from core.functions import train, val
 
@@ -20,6 +24,7 @@ parser.add_argument('--val_batch', type=int, required=False, default=32, help='B
 parser.add_argument('--lr', type=float, required=False, default=0.001, help='Learning rate.')
 
 def main(args):
+    # TODO implement original dataloader class
     transform = getTransforms()
 
     trainset = torchvision.datasets.CIFAR10(
@@ -48,24 +53,27 @@ def main(args):
         num_workers = 1
     )
 
-    resnet = ResNet().to(DEVICE)
+    model = ResNet(pretrained=False).to(DEVICE)
     criterion = nn.CrossEntropyLoss()
-    optimizer = optim.SGD(resnet.parameters(), lr=args.lr, momentum=0.9)
+    optimizer = optim.SGD(model.parameters(), lr=args.lr, momentum=0.9)
 
     max_epoch = args.max_epoch
     last_epoch = 0
     best_val_loss = None
+    train_losses = []
+    val_losses = []
 
     output_dir = os.path.join('outputs', args.data)
-    graph_dir = os.path.join(output_dir, 'losses')
     model_state_file = os.path.join(output_dir, 'checkpoint.pth.tar')
-    os.makedirs(graph_dir, exist_ok=True)
+    os.makedirs(output_dir, exist_ok=True)
 
     if os.path.exists(model_state_file):
         checkpoint = torch.load(model_state_file)
         last_epoch = checkpoint['epoch']
         best_val_loss = checkpoint['best_val_loss']
-        resnet.load_state_dict(checkpoint['state_dict'], strict=False)
+        train_losses = checkpoint['train_losses']
+        val_losses = checkpoint['val_losses']
+        model.load_state_dict(checkpoint['state_dict'], strict=False)
         optimizer.load_state_dict(checkpoint['optimizer'])
         print('=> loaded checkpoint (epoch {})'.format(last_epoch))
 
@@ -73,25 +81,28 @@ def main(args):
         print('Epoch {}'.format(epoch))
 
         train_loss = train(
-            model = resnet,
+            model = model,
             dataloader = trainloader,
             criterion = criterion,
             optimizer = optimizer,
             device = DEVICE
         )
         val_loss = val(
-            model = resnet,
+            model = model,
             dataloader = testloader,
             criterion = criterion,
             device = DEVICE
         )
+
+        train_losses.append(train_loss)
+        val_losses.append(val_loss)
 
         print('Loss: train = {}, val = {}'.format(train_loss, val_loss))
 
         if best_val_loss is None or val_loss < best_val_loss:
             best_val_loss = val_loss
             torch.save(
-                resnet.state_dict(),
+                model.state_dict(),
                 os.path.join(output_dir, 'best.pth')
             )
 
@@ -100,11 +111,20 @@ def main(args):
             {
                 'epoch': epoch+1,
                 'best_val_loss': best_val_loss,
-                'state_dict': resnet.state_dict(),
+                'train_losses': train_losses,
+                'val_losses': val_losses,
+                'state_dict': model.state_dict(),
                 'optimizer': optimizer.state_dict()
             },
             model_state_file
         )
+
+        if (epoch+1) % 100 == 0:
+            plt.plot(range(epoch+1), train_losses, label="train")
+            plt.plot(range(epoch+1), val_losses, label="val")
+            plt.legend()
+            plt.savefig(os.path.join(output_dir, 'losses.png'))
+            plt.clf()
 
 def getTransforms():
     return transforms.Compose(

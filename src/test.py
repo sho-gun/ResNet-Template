@@ -30,7 +30,7 @@ def main(args):
         num_workers = 1
     )
 
-    resnet = ResNet().to(DEVICE)
+    model = ResNet().to(DEVICE)
 
     output_dir = os.path.join('outputs', args.data)
     model_state_file = os.path.join(output_dir, 'checkpoint.pth.tar')
@@ -42,13 +42,17 @@ def main(args):
     if os.path.exists(model_file):
         checkpoint = torch.load(model_file)
         if 'state_dict' in checkpoint.keys():
-            resnet.load_state_dict(checkpoint['state_dict'], strict=False)
+            model.load_state_dict(checkpoint['state_dict'], strict=False)
         else:
-            resnet.load_state_dict(checkpoint, strict=False)
+            model.load_state_dict(checkpoint, strict=False)
         print('=> loaded {}'.format(model_file))
 
+    else:
+        print('model_file "{}" does not exists.'.format(model_file))
+        exit(1)
+
     accuracy = test(
-        model = resnet,
+        model = model,
         dataloader = testloader,
         device = DEVICE
     )

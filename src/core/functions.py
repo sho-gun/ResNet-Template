@@ -1,5 +1,4 @@
 import torch
-import torch.optim as optim
 
 def train(model=None, dataloader=None, criterion=None, optimizer=None, device='cpu'):
     running_loss = 0.0
