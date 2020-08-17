@@ -1,3 +1,4 @@
+import torch
 import torch.optim as optim
 
 def train(model=None, dataloader=None, criterion=None, optimizer=None, device='cpu'):
@@ -25,11 +26,25 @@ def val(model=None, dataloader=None, criterion=None, device='cpu'):
     running_loss = 0.0
     num_iter = 0
 
-    for inputs, labels in dataloader:
-        outputs = model(inputs.to(device))
-        loss = criterion(outputs, labels.to(device))
+    with torch.no_grad():
+        for inputs, labels in dataloader:
+            outputs = model(inputs.to(device))
+            loss = criterion(outputs, labels.to(device))
 
-        running_loss += loss.item()
-        num_iter += 1
+            running_loss += loss.item()
+            num_iter += 1
 
     return running_loss / num_iter
+
+def test(model=None, dataloader=None, device='cpu'):
+    correct = 0
+    total = 0
+
+    with torch.no_grad():
+        for inputs, labels in dataloader:
+            outputs = model(inputs.to(device))
+            _, predicted = torch.max(outputs.data, 1)
+            total += labels.size(0)
+            correct += (predicted.to('cpu') == labels).sum().item()
+
+    return float(correct / total)
