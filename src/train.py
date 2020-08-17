@@ -53,7 +53,7 @@ def main(args):
         num_workers = 1
     )
 
-    model = ResNet(pretrained=False).to(DEVICE)
+    model = ResNet(num_layers=18, pretrained=False).to(DEVICE)
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.SGD(model.parameters(), lr=args.lr, momentum=0.9)
 
