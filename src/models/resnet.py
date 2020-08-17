@@ -19,6 +19,8 @@ class ResNet(nn.Module):
             print('ResNet: num_layers should be the one of [18, 34, 50, 101, 152]')
             exit(1)
 
+        self.resnet.fc = nn.Linear(self.resnet.fc.in_features, 10)
+
     def forward(self, x):
         x = self.resnet(x)
         return x

@@ -30,7 +30,7 @@ def main(args):
         num_workers = 1
     )
 
-    model = ResNet().to(DEVICE)
+    model = ResNet(num_layers=18).to(DEVICE)
 
     output_dir = os.path.join('outputs', args.data)
     model_state_file = os.path.join(output_dir, 'checkpoint.pth.tar')
