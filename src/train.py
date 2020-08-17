@@ -54,7 +54,7 @@ def main(args):
         num_workers = 1
     )
 
-    model = ResNet(num_layers=18, pretrained=True).to(DEVICE)
+    model = ResNet(num_layers=18, num_classes=10, pretrained=True).to(DEVICE)
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.SGD(model.parameters(), lr=args.lr, momentum=0.9)
 
@@ -125,6 +125,7 @@ def main(args):
         if (epoch+1) % 100 == 0:
             plt.plot(range(epoch+1), train_losses, label="train")
             plt.plot(range(epoch+1), val_losses, label="val")
+            plt.yscale('log')
             plt.legend()
             plt.savefig(os.path.join(output_dir, 'losses.png'))
             plt.clf()
