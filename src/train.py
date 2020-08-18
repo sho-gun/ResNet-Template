@@ -13,6 +13,7 @@ import matplotlib.pyplot as plt
 
 from models.resnet import ResNet
 from core.functions import train, val
+from datasets import BaseDataset
 
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 print('torch.cuda.is_available():', torch.cuda.is_available())
@@ -25,31 +26,31 @@ parser.add_argument('--val_batch', type=int, required=False, default=32, help='B
 parser.add_argument('--lr', type=float, required=False, default=0.001, help='Learning rate.')
 
 def main(args):
-    # TODO implement original dataloader class
     transform = getTransforms()
 
-    trainset = torchvision.datasets.CIFAR10(
-        root = './data',
-        train = True,
-        download = True,
+    data_path = os.path.join('data', args.data)
+    if not os.path.exists(data_path):
+        print('ERROR: No dataset named {}'.format(args.data))
+        exit(1)
+
+    trainset = BaseDataset(
+        list_path = os.path.join(data_path, 'train.lst'),
         transform = transform
     )
     trainloader = torch.utils.data.DataLoader(
         trainset,
-        batch_size = 100,
+        batch_size = args.train_batch,
         shuffle = True,
         num_workers = 1
     )
 
-    testset = torchvision.datasets.CIFAR10(
-        root = './data',
-        train = False,
-        download = True,
+    testset = BaseDataset(
+        list_path = os.path.join(data_path, 'val.lst'),
         transform = transform
     )
     testloader = torch.utils.data.DataLoader(
         testset,
-        batch_size = 100,
+        batch_size = args.val_batch,
         shuffle = False,
         num_workers = 1
     )

@@ -17,15 +17,18 @@ parser.add_argument('--model_file', type=str, required=False, default='', help='
 def main(args):
     transform = getTransforms()
 
-    testset = torchvision.datasets.CIFAR10(
-        root = './data',
-        train = False,
-        download = True,
+    data_path = os.path.join('data', args.data)
+    if not os.path.exists(data_path):
+        print('ERROR: No dataset named {}'.format(args.data))
+        exit(1)
+
+    testset = BaseDataset(
+        list_path = os.path.join(data_path, 'val.lst'),
         transform = transform
     )
     testloader = torch.utils.data.DataLoader(
         testset,
-        batch_size = 100,
+        batch_size = 1,
         shuffle = False,
         num_workers = 1
     )
