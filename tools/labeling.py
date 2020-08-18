@@ -27,7 +27,6 @@ def _main(args):
         basename, ext = os.path.splitext(image_file)
         output_lbl_file = os.path.join(output_lbl_dir, basename + '.txt')
 
-        # if os.path.basename(output_lbl_file) in os.listdir(output_lbl_dir):
         if os.path.exists(output_lbl_file):
             continue
 
@@ -51,6 +50,10 @@ def create_label_file(label_path, class_dict):
     for k, v in class_dict.items():
         print(k, v)
     class_id = int(input('>>'))
+
+    if not class_id in class_dict.keys():
+        print('ERROR: Input number should be in class id')
+        exit(1)
 
     with open(label_path, 'w') as label_file:
         label_file.write('{}'.format(class_id))
