@@ -23,6 +23,7 @@ parser.add_argument('--data', type=str, required=True, help='Name of the dataset
 parser.add_argument('--max_epoch', type=int, required=False, default=500, help='Max number of epoch to train.')
 parser.add_argument('--train_batch', type=int, required=False, default=32, help='Batch size for train set.')
 parser.add_argument('--val_batch', type=int, required=False, default=32, help='Batch size for validation set.')
+parser.add_argument('--num_classes', type=int, required=True, help='Number of classes in your dataset.')
 parser.add_argument('--lr', type=float, required=False, default=0.001, help='Learning rate.')
 
 def main(args):
@@ -55,7 +56,7 @@ def main(args):
         num_workers = 1
     )
 
-    model = ResNet(num_layers=18, num_classes=10, pretrained=True).to(DEVICE)
+    model = ResNet(num_layers=18, num_classes=args.num_classes, pretrained=True).to(DEVICE)
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.SGD(model.parameters(), lr=args.lr, momentum=0.9)
 

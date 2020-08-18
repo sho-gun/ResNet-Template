@@ -12,6 +12,7 @@ print('torch.cuda.is_available():', torch.cuda.is_available())
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--data', type=str, required=True, help='Name of the dataset for train.')
+parser.add_argument('--num_classes', type=int, required=True, help='Number of classes in your dataset.')
 parser.add_argument('--model_file', type=str, required=False, default='', help='Name of the checkpoint for testing.')
 
 def main(args):
@@ -33,7 +34,7 @@ def main(args):
         num_workers = 1
     )
 
-    model = ResNet(num_layers=18, num_classes=10).to(DEVICE)
+    model = ResNet(num_layers=18, num_classes=args.num_classes).to(DEVICE)
 
     output_dir = os.path.join('outputs', args.data)
     model_state_file = os.path.join(output_dir, 'checkpoint.pth.tar')
