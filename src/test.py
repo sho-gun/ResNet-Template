@@ -6,6 +6,7 @@ import torchvision.transforms as transforms
 
 from models.resnet import ResNet
 from core.functions import test
+from datasets import BaseDataset
 
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 print('torch.cuda.is_available():', torch.cuda.is_available())
