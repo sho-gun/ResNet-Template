@@ -12,7 +12,7 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 from models.resnet import ResNet
-from core.functions import train, val
+from core.functions import train, val, test
 from datasets import BaseDataset
 
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
@@ -65,8 +65,10 @@ def main(args):
     max_epoch = args.max_epoch
     last_epoch = 0
     best_val_loss = None
+    best_accuracy = None
     train_losses = []
     val_losses = []
+    accuracies = []
 
     output_dir = os.path.join('outputs', args.data)
     model_state_file = os.path.join(output_dir, 'checkpoint.pth.tar')
@@ -76,8 +78,10 @@ def main(args):
         checkpoint = torch.load(model_state_file)
         last_epoch = checkpoint['epoch']
         best_val_loss = checkpoint['best_val_loss']
+        best_accuracy = checkpoint['best_accuracy']
         train_losses = checkpoint['train_losses']
         val_losses = checkpoint['val_losses']
+        accuracies = checkpoint['accuracies']
         model.load_state_dict(checkpoint['state_dict'], strict=False)
         optimizer.load_state_dict(checkpoint['optimizer'])
         print('=> loaded checkpoint (epoch {})'.format(last_epoch))
@@ -98,14 +102,26 @@ def main(args):
             criterion = criterion,
             device = DEVICE
         )
+        accuracy = test(
+            model = model,
+            dataloader = testloader,
+            device = DEVICE
+        )
 
         train_losses.append(train_loss)
         val_losses.append(val_loss)
+        accuracies.append(accuracy)
 
-        print('Loss: train = {}, val = {}'.format(train_loss, val_loss))
+        print('Loss: train = {}, val = {}, acc. = {}'.format(train_loss, val_loss, accuracy))
 
-        if best_val_loss is None or val_loss < best_val_loss:
-            best_val_loss = val_loss
+        # if best_val_loss is None or val_loss < best_val_loss:
+        #     best_val_loss = val_loss
+        #     torch.save(
+        #         model.state_dict(),
+        #         os.path.join(output_dir, 'best.pth')
+        #     )
+        if best_accuracy is None or accuracy > best_accuracy:
+            best_accuracy = accuracy
             torch.save(
                 model.state_dict(),
                 os.path.join(output_dir, 'best.pth')
@@ -116,8 +132,10 @@ def main(args):
             {
                 'epoch': epoch+1,
                 'best_val_loss': best_val_loss,
+                'best_accuracy': best_accuracy,
                 'train_losses': train_losses,
                 'val_losses': val_losses,
+                'accuracies': accuracies,
                 'state_dict': model.state_dict(),
                 'optimizer': optimizer.state_dict()
             },
