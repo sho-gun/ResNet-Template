@@ -143,10 +143,22 @@ def main(args):
         )
 
         if (epoch+1) % 100 == 0:
-            plt.plot(range(epoch+1), train_losses, label="train")
-            plt.plot(range(epoch+1), val_losses, label="val")
-            plt.yscale('log')
-            plt.legend()
+            # plt.plot(range(epoch+1), train_losses, label="train")
+            # plt.plot(range(epoch+1), val_losses, label="val")
+            # plt.yscale('log')
+            # plt.legend()
+            # plt.savefig(os.path.join(output_dir, 'losses.png'))
+            # plt.clf()
+
+            fig, ax1 = plt.subplot()
+            ax2 = ax1.twinx()
+            ax1.plot(range(epoch+1), train_losses, label='train')
+            ax1.plot(range(epoch+1), val_losses, label='val')
+            ax1.yscale('log')
+            ax2.plot(range(epoch+1), accuracies, label='accuracy')
+            handler1, label1 = ax1.get_legend_handles_labels()
+            handler2, label2 = ax2.get_legend_handles_labels()
+            ax1.legend(handler1 + handler2, label1 + label2, loc=3, borderaxespad=0.)
             plt.savefig(os.path.join(output_dir, 'losses.png'))
             plt.clf()
 
