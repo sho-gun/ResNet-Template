@@ -150,11 +150,11 @@ def main(args):
             # plt.savefig(os.path.join(output_dir, 'losses.png'))
             # plt.clf()
 
-            fig, ax1 = plt.subplot()
+            fig, ax1 = plt.subplots()
             ax2 = ax1.twinx()
             ax1.plot(range(epoch+1), train_losses, label='train')
             ax1.plot(range(epoch+1), val_losses, label='val')
-            ax1.yscale('log')
+            ax1.set_yscale('log')
             ax2.plot(range(epoch+1), accuracies, label='accuracy')
             handler1, label1 = ax1.get_legend_handles_labels()
             handler2, label2 = ax2.get_legend_handles_labels()
