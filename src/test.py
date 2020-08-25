@@ -31,11 +31,11 @@ def main(args):
     testloader = torch.utils.data.DataLoader(
         testset,
         batch_size = 1,
-        shuffle = False,
+        shuffle = True,
         num_workers = 1
     )
 
-    model = ResNet(num_layers=18, num_classes=args.num_classes).to(DEVICE)
+    model = ResNet(num_layers=50, num_classes=args.num_classes).to(DEVICE)
 
     output_dir = os.path.join('outputs', args.data)
     model_state_file = os.path.join(output_dir, 'checkpoint.pth.tar')

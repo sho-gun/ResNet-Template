@@ -45,5 +45,5 @@ def test(model=None, dataloader=None, device='cpu'):
             _, predicted = torch.max(outputs.data, 1)
             total += labels.size(0)
             correct += (predicted.to('cpu') == labels).sum().item()
-
+    
     return float(correct / total)

@@ -52,11 +52,11 @@ def main(args):
     testloader = torch.utils.data.DataLoader(
         testset,
         batch_size = args.val_batch,
-        shuffle = False,
+        shuffle = True,
         num_workers = 1
     )
 
-    model = ResNet(num_layers=18, num_classes=args.num_classes, pretrained=True).to(DEVICE)
+    model = ResNet(num_layers=50, num_classes=args.num_classes, pretrained=True).to(DEVICE)
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.SGD(model.parameters(), lr=args.lr, momentum=0.9)
 
