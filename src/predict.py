@@ -67,9 +67,9 @@ def main(args):
             print(class_text, path)
 
             image = cv2.imread(path[0], cv2.IMREAD_COLOR)
-            image = cv2.rectangle(image,(0,0),(300,50),(255,255,255),-1)
-            image = cv2.rectangle(image,(0,0),(300,50),(255,0,0),2)
-            cv2.putText(image,class_text,(10,38), font, 1,(255,0,),2,cv2.LINE_AA)
+            image = cv2.rectangle(image,(0,0),(150,25),(255,255,255),-1)
+            image = cv2.rectangle(image,(0,0),(150,25),(255,0,0),2)
+            cv2.putText(image, class_text, (5,15) , font, 0.5, (255,0,), 1, cv2.LINE_AA)
             cv2.imwrite(os.path.join(output_dir, os.path.basename(path[0])), image)
 
 def getClassText(classId):
