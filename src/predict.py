@@ -13,7 +13,7 @@ DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 print('torch.cuda.is_available():', torch.cuda.is_available())
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--num_classes', type=int, required=True, help='Number of classes in your dataset.')
+parser.add_argument('--class_list', type=str, required=True, help='Path to the class list file.')
 parser.add_argument('--model_file', type=str, required=True, help='Name of the checkpoint for testing.')
 parser.add_argument('--input_data', type=str, required=True, help='Target directory.')
 
@@ -36,7 +36,15 @@ def main(args):
         num_workers = 1
     )
 
-    model = ResNet(num_layers=18, num_classes=args.num_classes).to(DEVICE)
+    with open(args.class_list, 'r') as class_file:
+        class_names = []
+        for class_name in class_file.readlines():
+            if len(class_name.strip()) > 0:
+                class_names.append(class_name.strip())
+
+        # class_names = [name.strip() for name in class_file.readlines()]
+
+    model = ResNet(num_layers=50, num_classes=len(class_names)).to(DEVICE)
     model = model.eval()
 
     output_dir = os.path.join(data_path, 'out')
@@ -63,7 +71,8 @@ def main(args):
             outputs = model(data.to(DEVICE))
             _, predicted = torch.max(outputs.data, 1)
             predicted = predicted.to('cpu')[0].item()
-            class_text = getClassText(predicted)
+            # class_text = getClassText(predicted)
+            class_text = class_names[predicted]
             print(class_text, path)
 
             image = cv2.imread(path[0], cv2.IMREAD_COLOR)
