@@ -1,4 +1,5 @@
 import torch
+from sklearn.metrics import confusion_matrix
 
 def train(model=None, dataloader=None, criterion=None, optimizer=None, device='cpu'):
     running_loss = 0.0
@@ -35,9 +36,13 @@ def val(model=None, dataloader=None, criterion=None, device='cpu'):
 
     return running_loss / num_iter
 
-def test(model=None, dataloader=None, device='cpu'):
+def test(model=None, dataloader=None, device='cpu', classes=[]):
     correct = 0
     total = 0
+
+    if len(classes) > 0:
+        targets = []
+        predictions = []
 
     with torch.no_grad():
         for inputs, labels in dataloader:
@@ -45,5 +50,13 @@ def test(model=None, dataloader=None, device='cpu'):
             _, predicted = torch.max(outputs.data, 1)
             total += labels.size(0)
             correct += (predicted.to('cpu') == labels).sum().item()
-    
+
+            if len(classes) > 0:
+                for prediction, target in zip(predicted.to('cpu'), labels):
+                    targets.append(classes[int(target)])
+                    predictions.append(classes[int(prediction)])
+
+    if len(classes) > 0:
+        print(confusion_matrix(targets, predictions, labels=classes))
+
     return float(correct / total)

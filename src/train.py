@@ -56,7 +56,7 @@ def main(args):
         num_workers = 1
     )
 
-    model = ResNet(num_layers=50, num_classes=args.num_classes, pretrained=True).to(DEVICE)
+    model = ResNet(num_layers=18, num_classes=args.num_classes, pretrained=True).to(DEVICE)
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.SGD(model.parameters(), lr=args.lr, momentum=0.9)
 
@@ -154,8 +154,10 @@ def main(args):
             ax2 = ax1.twinx()
             ax1.plot(range(epoch+1), train_losses, label='train')
             ax1.plot(range(epoch+1), val_losses, label='val')
+            ax1.set_xscale('log')
             ax1.set_yscale('log')
             ax2.plot(range(epoch+1), accuracies, color='red', label='accuracy')
+            ax2.set_xscale('log')
             handler1, label1 = ax1.get_legend_handles_labels()
             handler2, label2 = ax2.get_legend_handles_labels()
             ax1.legend(handler1 + handler2, label1 + label2, loc=3, borderaxespad=0.)

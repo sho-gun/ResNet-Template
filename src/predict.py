@@ -44,7 +44,7 @@ def main(args):
 
         # class_names = [name.strip() for name in class_file.readlines()]
 
-    model = ResNet(num_layers=50, num_classes=len(class_names)).to(DEVICE)
+    model = ResNet(num_layers=18, num_classes=len(class_names)).to(DEVICE)
     model = model.eval()
 
     output_dir = os.path.join(data_path, 'out')
