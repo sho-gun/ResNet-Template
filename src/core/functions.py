@@ -53,10 +53,11 @@ def test(model=None, dataloader=None, device='cpu', classes=[]):
 
             if len(classes) > 0:
                 for prediction, target in zip(predicted.to('cpu'), labels):
-                    targets.append(classes[int(target)])
-                    predictions.append(classes[int(prediction)])
+                    targets.append(classes[target.item()])
+                    predictions.append(classes[prediction.item()])
 
     if len(classes) > 0:
+        print(classes)
         print(confusion_matrix(targets, predictions, labels=classes))
 
     return float(correct / total)

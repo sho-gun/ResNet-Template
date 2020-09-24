@@ -42,8 +42,6 @@ def main(args):
             if len(class_name.strip()) > 0:
                 class_names.append(class_name.strip())
 
-        # class_names = [name.strip() for name in class_file.readlines()]
-
     model = ResNet(num_layers=18, num_classes=len(class_names)).to(DEVICE)
     model = model.eval()
 
@@ -71,7 +69,6 @@ def main(args):
             outputs = model(data.to(DEVICE))
             _, predicted = torch.max(outputs.data, 1)
             predicted = predicted.to('cpu')[0].item()
-            # class_text = getClassText(predicted)
             class_text = class_names[predicted]
             print(class_text, path)
 
@@ -81,18 +78,10 @@ def main(args):
             cv2.putText(image, class_text, (5,15) , font, 0.5, (255,0,), 1, cv2.LINE_AA)
             cv2.imwrite(os.path.join(output_dir, os.path.basename(path[0])), image)
 
-def getClassText(classId):
-    if classId == 0:
-        return 'Crossroad'
-    if classId == 1:
-        return 'T-junction'
-    return 'Others'
-
 def getTransforms():
     return transforms.Compose(
         [
             transforms.ToTensor(),
-            # transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
             transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
         ]
     )

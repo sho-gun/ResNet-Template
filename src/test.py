@@ -13,7 +13,6 @@ print('torch.cuda.is_available():', torch.cuda.is_available())
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--data', type=str, required=True, help='Name of the dataset for train.')
-# parser.add_argument('--num_classes', type=int, required=True, help='Number of classes in your dataset.')
 parser.add_argument('--model_file', type=str, required=False, default='', help='Name of the checkpoint for testing.')
 
 def main(args):
@@ -38,6 +37,7 @@ def main(args):
     class_list = getClassList(data_path)
 
     model = ResNet(num_layers=18, num_classes=len(class_list)).to(DEVICE)
+    model.eval()
 
     output_dir = os.path.join('outputs', args.data)
     model_state_file = os.path.join(output_dir, 'checkpoint.pth.tar')
@@ -71,15 +71,16 @@ def getTransforms():
     return transforms.Compose(
         [
             transforms.ToTensor(),
-            # transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
             transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
         ]
     )
 
 def getClassList(data_path):
-    class_list = [class_name.strip() for class_name in open(os.path.join(data_path, 'classes.txt'), 'r')]
-    # with open(os.path.join(data_path, 'classes.txt'), 'r') as classes:
-    #     for class in classes:
+    class_list = []
+    with open(os.path.join(data_path, 'classes.txt'), 'r') as class_file:
+        for class_name in class_file.readlines():
+            if len(class_name.strip()) > 0:
+                class_list.append(class_name.strip())
     return class_list
 
 if __name__ == '__main__':
