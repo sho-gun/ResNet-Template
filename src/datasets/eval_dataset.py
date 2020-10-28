@@ -1,5 +1,6 @@
 import os
 import cv2
+from PIL import Image
 from . import BaseDataset
 
 class EvalDataset(BaseDataset):
@@ -13,7 +14,8 @@ class EvalDataset(BaseDataset):
     def __getitem__(self, idx):
         image_file = self.img_list[idx]
 
-        image = cv2.imread(image_file, cv2.IMREAD_COLOR)
+        # image = cv2.imread(image_file, cv2.IMREAD_COLOR)
+        image = Image.open(image_file)
         if self.transform:
             image = self.transform(image)
 

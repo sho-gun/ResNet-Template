@@ -70,6 +70,7 @@ def main(args):
 def getTransforms():
     return transforms.Compose(
         [
+            transforms.Resize((720, 1280)),
             transforms.ToTensor(),
             transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
         ]

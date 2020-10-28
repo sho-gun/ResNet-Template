@@ -1,5 +1,6 @@
 import cv2
 import torch.utils as utils
+from PIL import Image
 
 class BaseDataset(utils.data.Dataset):
     def __init__(self, list_path=None, transform=None):
@@ -16,7 +17,8 @@ class BaseDataset(utils.data.Dataset):
     def __getitem__(self, idx):
         image_file, label_file = self.img_list[idx]
 
-        image = cv2.imread(image_file, cv2.IMREAD_COLOR)
+        # image = cv2.imread(image_file, cv2.IMREAD_COLOR)
+        image = Image.open(image_file)
         if self.transform:
             image = self.transform(image)
 
