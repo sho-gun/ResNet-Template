@@ -6,6 +6,8 @@ def train(model=None, dataloader=None, criterion=None, optimizer=None, device='c
     num_iter = 0
     max_iter = len(dataloader)
 
+    model = model.train()
+
     for i, (inputs, labels) in enumerate(dataloader):
         optimizer.zero_grad()
 
@@ -26,6 +28,8 @@ def val(model=None, dataloader=None, criterion=None, device='cpu'):
     running_loss = 0.0
     num_iter = 0
 
+    model = model.eval()
+
     with torch.no_grad():
         for inputs, labels in dataloader:
             outputs = model(inputs.to(device))
@@ -39,6 +43,8 @@ def val(model=None, dataloader=None, criterion=None, device='cpu'):
 def test(model=None, dataloader=None, device='cpu', classes=[]):
     correct = 0
     total = 0
+
+    model = model.eval()
 
     if len(classes) > 0:
         targets = []

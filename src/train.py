@@ -15,6 +15,8 @@ from models.resnet import ResNet
 from core.functions import train, val, test
 from datasets import BaseDataset
 
+# from memory_profiler import profile
+
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 print('torch.cuda.is_available():', torch.cuda.is_available())
 
@@ -26,6 +28,7 @@ parser.add_argument('--val_batch', type=int, required=False, default=32, help='B
 parser.add_argument('--num_classes', type=int, required=True, help='Number of classes in your dataset.')
 parser.add_argument('--lr', type=float, required=False, default=0.001, help='Learning rate.')
 
+# @profile
 def main(args):
     transform = getTransforms()
 
